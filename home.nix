@@ -1,0 +1,47 @@
+{ config, pkgs, inputs, lib, ... }:
+
+{
+
+    imports = [
+      ./modules/user/steam.nix
+      # programs
+      ./modules/user/git.nix
+      ./modules/user/bash.nix
+      ./modules/user/btop.nix
+      ./modules/user/starship.nix
+      ./modules/user/alacritty.nix
+      ./modules/user/env.nix
+      ./modules/user/thunar_exo.nix
+      ./modules/user/dunst.nix
+      ./modules/core/emulator_config.nix
+      ./modules/user/caveman.nix
+      ./modules/user/mpv.nix
+    ];
+
+    home = {
+    username = "synnove";
+    homeDirectory = "/home/synnove";
+    stateVersion = "24.05";
+    };
+    
+    programs.bash.shellAliases = {
+      "update" = "nix flake update nixlypkgs --flake $HOME/.nixos && sudo nixos-rebuild boot --flake $HOME/.nixos#laptop-sno";
+      "upgrade" = "nix flake update --flake $HOME/.nixos && sudo nixos-rebuild boot --flake $HOME/.nixos#laptop-sno";
+      "nixly" = "cd $HOME/.nixlyos/";
+      "c" = "claude --dangerously-skip-permissions";
+    };
+
+
+    # Calendar/accounts: set basePath to satisfy HM module defaults
+    accounts.calendar.basePath = ".calendar";
+    accounts.contact.basePath = ".contacts";
+
+    # Let Home Manager install and manage itself.
+    programs.home-manager.enable = true;
+
+    # Overwrites existing home-manager file
+    xdg.configFile."mimeapps.list".force = true;
+
+    # Set login keyring as default (auto-unlocked via PAM on login)
+    home.file.".local/share/keyrings/default".text = "login";
+}
